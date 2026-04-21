@@ -82,19 +82,81 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .generate-btn:hover{background:var(--accent2);transform:translateY(-1px);}
 
 #exam-preview{display:none;}
-.exam-paper{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:12px;}
-.exam-header{text-align:center;border-bottom:2px solid var(--text);padding-bottom:12px;margin-bottom:18px;}
-.exam-header h2{font-family:'Noto Serif TC',serif;font-size:19px;margin-bottom:5px;}
-.exam-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);flex-wrap:wrap;gap:3px;}
-.exam-section{margin-bottom:18px;}
-.exam-section-title{font-size:13px;font-weight:600;margin-bottom:9px;padding-bottom:4px;border-bottom:1px solid var(--border);}
-.exam-question{margin-bottom:13px;font-size:14px;line-height:2;}
-.exam-question .q-num{font-weight:600;color:var(--accent);margin-right:3px;}
-.answer-line{display:inline-block;width:65px;border-bottom:1.5px solid var(--text);margin:0 3px;vertical-align:bottom;}
+
+/* ══ 台灣正式考卷樣式 ══ */
+.exam-paper{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:0;margin-bottom:12px;overflow:hidden;}
+
+/* 頂部標頭 */
+.tw-exam-header{border-bottom:3px double #111;padding:14px 20px 10px;text-align:center;}
+.tw-school-name{font-size:14px;font-weight:700;letter-spacing:3px;font-family:'Noto Serif TC',serif;line-height:1.7;}
+.tw-exam-title{font-size:16px;font-weight:900;letter-spacing:4px;font-family:'Noto Serif TC',serif;margin-top:2px;}
+
+/* 學生資訊欄 */
+.tw-student-row{display:flex;border-bottom:1.5px solid #111;font-size:12px;font-family:'Noto Sans TC',sans-serif;}
+.tw-student-row .tw-field{display:flex;align-items:center;padding:6px 12px;border-right:1px solid #ccc;gap:5px;flex:1;}
+.tw-student-row .tw-field:last-child{border-right:none;}
+.tw-field label{white-space:nowrap;font-weight:700;font-size:11px;color:#333;}
+.tw-field .tw-blank{border-bottom:1px solid #555;flex:1;min-width:44px;height:20px;display:inline-block;}
+.tw-score-field{flex:1.2;justify-content:center;font-weight:700;font-size:12px;background:#fafafa;}
+
+/* 考卷主體 */
+.tw-exam-body{padding:14px 20px 18px;font-size:13px;line-height:2;color:#111;font-family:'Noto Sans TC',sans-serif;}
+
+/* 大題標題 */
+.tw-section{margin-bottom:16px;}
+.tw-section-title{font-size:13px;font-weight:700;margin:14px 0 7px;display:flex;align-items:baseline;gap:7px;border-left:4px solid #111;padding-left:8px;line-height:1.7;}
+.tw-section-num{font-size:14px;font-weight:900;font-family:'Noto Serif TC',serif;}
+.tw-score-note{font-size:10px;font-weight:400;color:#555;margin-left:3px;}
+
+/* 題目列表 */
+.tw-questions{list-style:none;padding:0 0 0 4px;}
+.tw-questions li{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;line-height:2;}
+
+/* 圓圈題號 */
+.tw-q-num{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;min-width:21px;border:1.5px solid #111;border-radius:50%;font-size:10px;font-weight:700;margin-top:4px;flex-shrink:0;}
+
+/* 填空格 */
+.tw-blank{display:inline-block;border-bottom:1.5px solid #333;min-width:46px;height:22px;vertical-align:bottom;margin:0 2px;}
+.tw-box{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:1.5px solid #333;vertical-align:middle;margin:0 2px;font-size:12px;}
+
+/* 選擇題選項 */
+.tw-choices{display:flex;flex-wrap:wrap;gap:3px 20px;margin-top:1px;padding-left:29px;font-size:12px;}
+.tw-choice{display:flex;align-items:center;gap:4px;}
+.tw-choice-circle{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border:1.5px solid #666;border-radius:50%;font-size:9px;font-weight:700;}
+
+/* 連連看 */
+.tw-matching{display:flex;gap:12px;padding-left:29px;margin-top:4px;align-items:center;}
+.tw-match-col{display:flex;flex-direction:column;gap:8px;}
+.tw-match-item{border:1.5px solid #666;border-radius:4px;padding:3px 12px;font-size:12px;text-align:center;min-width:56px;}
+.tw-match-line{flex:1;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:18px;letter-spacing:-2px;}
+
+/* 判斷題括號 */
+.tw-tf-box{display:inline-block;border-bottom:1px solid #333;width:32px;margin-left:5px;vertical-align:bottom;height:20px;}
+
+/* 造句空格 */
+.tw-compose-line{display:block;border-bottom:1.5px solid #333;margin:3px 0 3px 29px;min-height:26px;width:calc(100% - 40px);}
+
+/* 錯別字底線 */
+.tw-wrong{text-decoration:underline;text-decoration-style:wavy;text-decoration-color:#c00;}
+
+/* 分隔線 */
+.tw-divider{border:none;border-top:1px dashed #ccc;margin:10px 0;}
+
+/* 頁尾 */
+.tw-exam-footer{border-top:1px solid #ddd;padding:6px 20px;display:flex;justify-content:space-between;font-size:10px;color:#999;}
+
 .exam-actions{display:flex;gap:8px;}
 .btn-print{flex:1;padding:10px;background:var(--blue);color:white;border:none;border-radius:var(--radius);font-size:12px;font-family:inherit;cursor:pointer;font-weight:500;}
 .btn-upload-go{flex:1;padding:10px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:12px;font-family:inherit;cursor:pointer;font-weight:500;}
 .btn-new{flex:1;padding:10px;background:var(--surface2);color:var(--text);border:none;border-radius:var(--radius);font-size:12px;font-family:inherit;cursor:pointer;font-weight:500;}
+
+@media print{
+  body *{visibility:hidden;}
+  #print-area,#print-area *{visibility:visible;}
+  #print-area{position:fixed;top:0;left:0;width:100%;}
+  .tw-exam-header{border-bottom:3px double #111;}
+  .tw-section-title{border-left:4px solid #111;}
+}
 
 .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg);}
 .upload-area:hover{border-color:var(--accent);background:#fff8f6;}
@@ -253,20 +315,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
           <div><label class="form-label">科目</label><select class="form-select" id="subject-select" onchange="updateUnitOptions()"><option value="math">數學（翰林）</option><option value="chinese">國語（康軒）</option></select></div>
           <div><label class="form-label">單元 / 課次</label><select class="form-select" id="unit-select"></select></div>
         </div>
-        <label class="form-label">難易度</label>
+        <label class="form-label">評量類型</label>
         <div class="difficulty-picker">
-          <button class="diff-btn active-easy" id="diff-easy" onclick="setDifficulty('easy')">🟢 基礎</button>
-          <button class="diff-btn" id="diff-medium" onclick="setDifficulty('medium')">🟡 標準</button>
-          <button class="diff-btn" id="diff-hard" onclick="setDifficulty('hard')">🔴 進階</button>
-          <button class="diff-btn" id="diff-mix" onclick="setDifficulty('mix')">🎯 混合</button>
-        </div>
-        <label class="form-label">題數</label>
-        <div class="qty-picker">
-          <button class="qty-btn" onclick="setQty(5)">5題</button>
-          <button class="qty-btn active" onclick="setQty(10)">10題</button>
-          <button class="qty-btn" onclick="setQty(15)">15題</button>
-          <button class="qty-btn" onclick="setQty(20)">20題</button>
-          <button class="qty-btn" onclick="setQty(30)">30題</button>
+          <button class="diff-btn active-easy" id="diff-quiz" onclick="setDifficulty('quiz')">📝 平時小考</button>
+          <button class="diff-btn" id="diff-midterm" onclick="setDifficulty('midterm')">📋 期中評量</button>
+          <button class="diff-btn" id="diff-final" onclick="setDifficulty('final')">📜 期末評量</button>
         </div>
         <button class="generate-btn" onclick="generateExam()">✨ 產生考卷</button>
       </div>
@@ -423,7 +476,7 @@ const LEVELS = [
 function getApiKey(){return localStorage.getItem('claude_api_key')||'';}
 function saveApiKey(key){localStorage.setItem('claude_api_key',key);}
 
-let currentUser=null,currentChild='A',selectedDifficulty='easy',selectedQty=10;
+let currentUser=null,currentChild='A',selectedDifficulty='quiz',selectedQty=10;
 let currentExamData=null,gradingData=[],uploadedImageBase64=null,familyData=null;
 
 onAuthStateChanged(auth,async(user)=>{
@@ -519,14 +572,109 @@ window.selectChild=(child)=>{
 };
 window.setDifficulty=(d)=>{
   selectedDifficulty=d;
-  ['easy','medium','hard','mix'].forEach(x=>{const b=document.getElementById('diff-'+x);b.className='diff-btn';if(x===d)b.classList.add('active-'+x);});
+  const activeMap={quiz:'active-easy',midterm:'active-medium',final:'active-hard'};
+  ['quiz','midterm','final'].forEach(x=>{
+    const b=document.getElementById('diff-'+x);if(!b)return;
+    b.className='diff-btn';if(x===d)b.classList.add(activeMap[x]);
+  });
 };
-window.setQty=(n)=>{selectedQty=n;document.querySelectorAll('.qty-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===n+'題'));};
 window.updateUnitOptions=()=>{
   const subj=document.getElementById('subject-select').value;
   const units=subj==='math'?MATH_UNITS:CHINESE_UNITS;
   document.getElementById('unit-select').innerHTML=units.map(u=>`<option value="${u.value}">${u.label}</option>`).join('');
 };
+
+// ── 題型配置：國語 ──
+const CHINESE_EXAM_CONFIG={
+  quiz:{label:'平時小考',totalScore:40,sections:[
+    {typeId:'zhuyin_choice',label:'一、選出正確的注音，圈起來。',scorePerQ:2,count:5,instruction:'每題有一個劃線的字，請選出正確的注音符號。'},
+    {typeId:'write_char',label:'二、看注音寫國字。',scorePerQ:2,count:5,instruction:'根據注音提示，在空格中填入正確的國字。'},
+    {typeId:'fill_context',label:'三、照課文填空。',scorePerQ:2,count:5,instruction:'根據課文內容，填入適當的字詞。'},
+    {typeId:'true_false',label:'四、判斷對錯，對的打○，錯的打×。',scorePerQ:2,count:5,instruction:'根據課文內容判斷，對的打○，錯的打×。'},
+  ]},
+  midterm:{label:'期中評量',totalScore:100,sections:[
+    {typeId:'zhuyin_choice',label:'一、選出正確的注音，圈起來。',scorePerQ:2,count:5,instruction:'每題有一個劃線的字，請選出正確的注音符號。'},
+    {typeId:'write_char',label:'二、看注音寫國字。',scorePerQ:2,count:5,instruction:'根據注音提示，在空格中填入正確的國字。'},
+    {typeId:'correct_char',label:'三、改錯別字，把正確的字寫在括號裡。',scorePerQ:2,count:4,instruction:'句子中有一個錯別字（畫波浪底線），把正確的字寫在括號裡。'},
+    {typeId:'fill_context',label:'四、照課文填空。',scorePerQ:2,count:5,instruction:'根據課文內容，填入適當的字詞。'},
+    {typeId:'true_false',label:'五、判斷對錯，對的打○，錯的打×。',scorePerQ:2,count:5,instruction:'根據課文內容判斷，對的打○，錯的打×。'},
+    {typeId:'matching',label:'六、連連看，把相關的詞語連起來。',scorePerQ:2,count:5,instruction:'根據課文，用線把左邊和右邊相對應的詞語連起來。'},
+    {typeId:'compose',label:'七、造句。',scorePerQ:4,count:3,instruction:'用指定的詞語造一個通順的句子。'},
+  ]},
+  final:{label:'期末評量',totalScore:100,sections:[
+    {typeId:'zhuyin_choice',label:'一、選出正確的注音，圈起來。',scorePerQ:2,count:5,instruction:'每題有一個劃線的字，請選出正確的注音符號。'},
+    {typeId:'write_char',label:'二、看注音寫國字。',scorePerQ:2,count:5,instruction:'根據注音提示，在空格中填入正確的國字。'},
+    {typeId:'correct_char',label:'三、改錯別字，把正確的字寫在括號裡。',scorePerQ:2,count:4,instruction:'句子中有一個錯別字（畫波浪底線），把正確的字寫在括號裡。'},
+    {typeId:'fill_context',label:'四、照課文填空。',scorePerQ:2,count:5,instruction:'根據課文內容，填入適當的字詞。'},
+    {typeId:'true_false',label:'五、判斷對錯，對的打○，錯的打×。',scorePerQ:2,count:5,instruction:'根據課文內容判斷，對的打○，錯的打×。'},
+    {typeId:'matching',label:'六、連連看，把相關的詞語連起來。',scorePerQ:2,count:5,instruction:'根據課文，用線把左邊和右邊相對應的詞語連起來。'},
+    {typeId:'word_order',label:'七、重組句子。',scorePerQ:3,count:3,instruction:'把打亂的詞語重新排列成通順的句子。'},
+    {typeId:'compose',label:'八、造句。',scorePerQ:4,count:3,instruction:'用指定的詞語造一個通順的句子。'},
+  ]},
+};
+
+// ── 題型配置：數學 ──
+const MATH_EXAM_CONFIG={
+  quiz:{label:'平時小考',totalScore:40,sections:[
+    {typeId:'mc_calc',label:'一、選擇題，選出正確的答案，填入括號。',scorePerQ:2,count:5,instruction:'看算式選出正確的答案。'},
+    {typeId:'fill_blank',label:'二、計算，填入答案。',scorePerQ:2,count:5,instruction:'計算下列各題，把答案填在空格中。'},
+    {typeId:'look_write',label:'三、看圖填空。',scorePerQ:2,count:5,instruction:'看圖回答問題，把答案填在空格中。'},
+    {typeId:'money',label:'四、算算看。',scorePerQ:3,count:2,instruction:'看題目計算並回答問題。'},
+  ]},
+  midterm:{label:'期中評量',totalScore:100,sections:[
+    {typeId:'mc_calc',label:'一、選擇題，選出正確的答案，填入括號。',scorePerQ:2,count:7,instruction:'看算式或題目，選出正確的答案，把號碼填在括號裡。'},
+    {typeId:'look_write',label:'二、看圖填空。',scorePerQ:2,count:5,instruction:'看圖回答問題，把答案填在空格中。'},
+    {typeId:'matching_eq',label:'三、把答案相同的算式連起來。',scorePerQ:2,count:5,instruction:'計算左右兩邊的算式，把答案相同的用線連起來。'},
+    {typeId:'fill_blank',label:'四、計算，填入答案。',scorePerQ:2,count:5,instruction:'計算下列各題，把答案填在空格中。'},
+    {typeId:'money',label:'五、錢幣計算，算算看。',scorePerQ:3,count:3,instruction:'看題目計算錢幣，並回答問題。'},
+    {typeId:'draw_calc',label:'六、看圖做做看，寫出算式，算算看。',scorePerQ:4,count:3,instruction:'看圖寫出算式，並計算出答案。'},
+  ]},
+  final:{label:'期末評量',totalScore:100,sections:[
+    {typeId:'mc_calc',label:'一、選擇題，選出正確的答案，填入括號。',scorePerQ:2,count:7,instruction:'看算式或題目，選出正確的答案，把號碼填在括號裡。'},
+    {typeId:'look_write',label:'二、看圖填空。',scorePerQ:2,count:5,instruction:'看圖（統計表或情境圖）回答問題，把答案填在空格中。'},
+    {typeId:'matching_eq',label:'三、把答案相同的算式連起來。',scorePerQ:2,count:5,instruction:'計算左右兩邊的算式，把答案相同的用線連起來。'},
+    {typeId:'fill_blank',label:'四、計算，填入答案。',scorePerQ:2,count:5,instruction:'計算下列各題，把答案填在空格中。'},
+    {typeId:'calendar',label:'五、看月曆回答問題。',scorePerQ:2,count:4,instruction:'看月曆，回答下列問題。'},
+    {typeId:'money',label:'六、錢幣計算，算算看。',scorePerQ:3,count:3,instruction:'看題目計算錢幣，並回答問題。'},
+    {typeId:'draw_calc',label:'七、看圖做做看，寫出算式，算算看。',scorePerQ:4,count:2,instruction:'看圖寫出算式，並計算出答案。'},
+    {typeId:'word_problem',label:'八、應用題，寫出算式，算算看。',scorePerQ:6,count:2,instruction:'看題目寫出算式，並算出答案。'},
+  ]},
+};
+
+function buildExamPrompt(subj, level, unit, childName){
+  const cfg = subj==='math' ? MATH_EXAM_CONFIG[level] : CHINESE_EXAM_CONFIG[level];
+  const subjLabel = subj==='math'?'數學（翰林一年級）':'國語（康軒一年級）';
+  const sectionDesc = cfg.sections.map(s=>{
+    const total = s.scorePerQ * s.count;
+    return `【${s.label}（每題${s.scorePerQ}分，共${total}分）】出${s.count}題。${s.instruction}`;
+  }).join('\n\n');
+  return `你是台灣國小一年級${subjLabel}老師，請出一份正式考卷。
+科目：${subjLabel}，單元：${unit.label}，知識點：${unit.topics.join('、')}，評量類型：${cfg.label}，孩子名字：${childName}
+
+請依序出以下各大題，題目符合一年級程度：
+${sectionDesc}
+
+輸出純JSON（不要任何說明文字）：
+{"subject":"${subjLabel}","unit":"${unit.label}","level":"${cfg.label}","totalScore":${cfg.totalScore},"sections":[{"sectionNum":1,"typeId":"題型id","label":"大題標題","scorePerQ":分數,"sectionTotal":總分,"questions":[各題]}]}
+
+各題型questions格式：
+zhuyin_choice: {"id":1,"text":"句子___字注音？","choices":["選A","選B","選C","選D"],"answer":0,"errorType":"注音錯誤"}
+write_char: {"id":1,"text":"老師___（ㄧㄠ）我們","zhuyin":"ㄧㄠ","answer":"邀","errorType":"字詞不熟"}
+correct_char: {"id":1,"text":"弟弟在草地上跑來跑區","wrongChar":"區","answer":"去","errorType":"字詞不熟"}
+fill_context: {"id":1,"text":"___不是終點","answer":"角落","errorType":"題意理解錯誤"}
+true_false: {"id":1,"text":"小明把雨衣晾乾了","answer":true,"errorType":"題意理解錯誤"}
+matching: {"id":1,"leftItems":["媽媽炒菜","打雷"],"rightItems":["轟隆轟隆","滋滋作響"],"pairs":[[0,1],[1,0]],"errorType":"題意理解錯誤"}
+word_order: {"id":1,"words":["跑","弟弟","草地上","在"],"answer":"弟弟在草地上跑","errorType":"題意理解錯誤"}
+compose: {"id":1,"keyword":"希望","exampleSentence":"我希望每天都快樂","errorType":"造句錯誤"}
+mc_calc: {"id":1,"text":"35+24=(  )","choices":["57","58","59","60"],"answer":2,"errorType":"計算錯誤"}
+fill_blank: {"id":1,"text":"48-13=___","answer":"35","errorType":"計算錯誤"}
+look_write: {"id":1,"description":"圖中有3袋糖每袋10顆","text":"共有___顆糖","answer":"30","errorType":"計算錯誤"}
+matching_eq: {"id":1,"leftItems":["35+12","60-13"],"rightItems":["47","47"],"pairs":[[0,0],[1,1]],"errorType":"計算錯誤"}
+money: {"id":1,"text":"買15元橡皮擦付20元應找___元","answer":"5","equation":"20-15=5","errorType":"計算錯誤"}
+calendar: {"id":1,"text":"六月份共有___天","answer":"30","errorType":"題意理解錯誤"}
+draw_calc: {"id":1,"description":"4排蘋果每排6個","text":"共幾個？寫算式","equation":"6+6+6+6=24","answer":"24","errorType":"計算錯誤"}
+word_problem: {"id":1,"text":"媽媽有23顆糖給小明8顆還剩幾顆？","equation":"23-8=15","answer":"15","errorType":"計算錯誤"}`;
+}
 
 window.generateExam=async()=>{
   const apiKey=getApiKey();
@@ -535,13 +683,11 @@ window.generateExam=async()=>{
   const unitVal=document.getElementById('unit-select').value;
   const units=subj==='math'?MATH_UNITS:CHINESE_UNITS;
   const unit=units.find(u=>u.value===unitVal);
-  const diffLabel={easy:'基礎',medium:'標準',hard:'進階',mix:'混合（基礎60%+標準30%+進階10%）'}[selectedDifficulty];
-  const subjLabel=subj==='math'?'數學（翰林）':'國語（康軒）';
   const childName=familyData?.[currentChild==='A'?'childA':'childB']||('孩子'+currentChild);
   showLoading('AI 正在出題中...');
-  const prompt=`你是台灣國小一年級${subjLabel}老師，幫我出${selectedQty}題考卷給${childName}。科目：${subjLabel}，單元：${unit.label}，知識點：${unit.topics.join('、')}，難易度：${diffLabel}。${subj==='math'?'基礎=計算題，標準=填空判斷，進階=文字應用題':'基礎=注音字詞，標準=詞語填空句子判斷，進階=短文閱讀造句'}。JSON格式回覆（不要其他文字）：{"title":"標題","subject":"${subjLabel}","unit":"${unit.label}","difficulty":"${diffLabel}","sections":[{"title":"一、題型","questions":[{"id":1,"question":"題目","answer":"答案","type":"錯誤類型","difficulty":"easy/medium/hard"}]}]}`;
+  const prompt=buildExamPrompt(subj, selectedDifficulty, unit, childName);
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:prompt}]})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:4000,messages:[{role:"user",content:prompt}]})});
     const data=await res.json();
     const text=data.content[0].text.replace(/```json|```/g,'').trim();
     currentExamData=JSON.parse(text);
@@ -550,19 +696,92 @@ window.generateExam=async()=>{
   }catch(e){hideLoading();alert('出題失敗，請確認 API Key 是否正確');console.error(e);}
 };
 
+const SEC_NUMS=['一','二','三','四','五','六','七','八','九','十'];
+
+function renderQuestion(q, typeId){
+  const circ=n=>`<span class="tw-q-num">${n}</span>`;
+  const blank=(w=46)=>`<span class="tw-blank" style="min-width:${w}px"></span>`;
+  const box=`<span class="tw-box"></span>`;
+  if(typeId==='zhuyin_choice'||typeId==='mc_calc'){
+    const letters=['①','②','③','④'];
+    const choices=(q.choices||[]).map((c,i)=>`<span class="tw-choice"><span class="tw-choice-circle">${letters[i]}</span>${c}</span>`).join('');
+    const txt=(q.text||q.question||'').replace(/___/g,blank());
+    return `<li>${circ(q.id)}<span>${txt}<div class="tw-choices">${choices}</div></span></li>`;
+  }
+  if(typeId==='write_char'){
+    const txt=(q.text||'').replace(/___/g,box);
+    return `<li>${circ(q.id)}<span>${txt}</span></li>`;
+  }
+  if(typeId==='correct_char'){
+    const esc=q.wrongChar?q.wrongChar.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'):'';
+    const txt=esc?(q.text||'').replace(new RegExp(esc),`<span class="tw-wrong">${q.wrongChar}</span>（${box}）`):q.text||'';
+    return `<li>${circ(q.id)}<span>${txt}</span></li>`;
+  }
+  if(['fill_context','fill_blank','money','calendar'].includes(typeId)){
+    const txt=(q.text||q.question||'').replace(/___/g,blank());
+    return `<li>${circ(q.id)}<span>${txt}</span></li>`;
+  }
+  if(typeId==='true_false'){
+    return `<li>${circ(q.id)}<span>${q.text||q.question}<span class="tw-tf-box"></span></span></li>`;
+  }
+  if(typeId==='matching'||typeId==='matching_eq'){
+    const lefts=(q.leftItems||[]).map(t=>`<div class="tw-match-item">${t}</div>`).join('');
+    const rights=(q.rightItems||[]).map(t=>`<div class="tw-match-item">${t}</div>`).join('');
+    return `<li style="flex-direction:column;align-items:flex-start"><div class="tw-matching"><div class="tw-match-col">${lefts}</div><div class="tw-match-line">───</div><div class="tw-match-col">${rights}</div></div></li>`;
+  }
+  if(typeId==='word_order'){
+    const words=(q.words||[]).map(w=>`<span class="tw-match-item" style="display:inline-block;margin:2px">${w}</span>`).join('　');
+    return `<li>${circ(q.id)}<span>${words}<br><span style="font-size:11px;color:#888;padding-left:4px">→ 答：${blank(120)}</span></span></li>`;
+  }
+  if(typeId==='compose'){
+    return `<li>${circ(q.id)}<span>用「${q.keyword}」造句：<span class="tw-compose-line"></span><span class="tw-compose-line"></span></span></li>`;
+  }
+  if(typeId==='look_write'){
+    const desc=q.description?`<div style="font-size:11px;color:#666;padding-left:29px;margin-bottom:2px">（${q.description}）</div>`:'';
+    return `<li style="flex-direction:column;align-items:flex-start">${desc}<div style="display:flex;gap:8px">${circ(q.id)}<span>${(q.text||'').replace(/___/g,blank())}</span></div></li>`;
+  }
+  if(typeId==='draw_calc'||typeId==='word_problem'){
+    const desc=q.description?`<div style="font-size:11px;color:#666;padding-left:4px;margin-bottom:2px">（${q.description}）</div>`:'';
+    return `<li style="flex-direction:column;align-items:flex-start">${desc}<div style="display:flex;gap:8px">${circ(q.id)}<span>${q.text||''}<br><span style="font-size:12px">算式：${blank(110)}　答：${blank(55)}</span></span></div></li>`;
+  }
+  return `<li>${circ(q.id)}<span>${(q.text||q.question||'').replace(/___/g,blank())}</span></li>`;
+}
+
 function renderExam(exam){
   const today=new Date().toLocaleDateString('zh-TW');
   const childName=familyData?.[currentChild==='A'?'childA':'childB']||('孩子'+currentChild);
-  let html=`<div class="exam-header"><h2>${exam.title}</h2><div class="exam-meta"><span>姓名：${childName}</span><span>日期：${today}</span><span>班級：一年___班</span><span>分數：___________</span></div></div>`;
-  exam.sections.forEach(s=>{
-    html+=`<div class="exam-section"><div class="exam-section-title">${s.title}</div>`;
-    s.questions.forEach(q=>{html+=`<div class="exam-question"><span class="q-num">${q.id}.</span>${q.question.replace(/___/g,'<span class="answer-line"></span>')}</div>`;});
-    html+=`</div>`;
+  const cfgMap=(exam.subject&&exam.subject.includes('數學'))?MATH_EXAM_CONFIG:CHINESE_EXAM_CONFIG;
+  const levelCfg=cfgMap[selectedDifficulty]||{};
+  let sectionsHtml='';
+  (exam.sections||[]).forEach((s,si)=>{
+    const total=s.sectionTotal||(s.scorePerQ*(s.questions||[]).length);
+    const scoreNote=`（每題${s.scorePerQ}分，共${total}分）`;
+    const qs=(s.questions||[]).map(q=>renderQuestion(q,s.typeId)).join('');
+    const divider=si<(exam.sections.length-1)?'<hr class="tw-divider">':'';
+    sectionsHtml+=`<div class="tw-section"><div class="tw-section-title"><span class="tw-section-num">${s.label||SEC_NUMS[si]+'、'}</span><span class="tw-score-note">${scoreNote}</span></div><ol class="tw-questions">${qs}</ol></div>${divider}`;
   });
+  const html=`
+    <div class="tw-exam-header">
+      <div class="tw-school-name">○○縣○○國民小學　113學年度第二學期${levelCfg.label||'定期評量'}</div>
+      <div class="tw-exam-title">一年級　${exam.subject||''}　｜　${exam.unit||''}</div>
+    </div>
+    <div class="tw-student-row">
+      <div class="tw-field" style="flex:2"><label>班級</label><span class="tw-blank"></span></div>
+      <div class="tw-field" style="flex:1"><label>座號</label><span class="tw-blank" style="min-width:32px"></span></div>
+      <div class="tw-field" style="flex:3"><label>姓名</label><span class="tw-blank" style="min-width:80px">${childName}</span></div>
+      <div class="tw-field tw-score-field" style="flex:2">總分：<span class="tw-blank" style="min-width:44px"></span>分</div>
+    </div>
+    <div class="tw-exam-body">${sectionsHtml}</div>
+    <div class="tw-exam-footer">
+      <span>${exam.subject||''} ｜ ${exam.unit||''}</span>
+      <span>滿分 ${exam.totalScore||100} 分</span>
+      <span>日期：${today}</span>
+    </div>`;
   document.getElementById('exam-paper-content').innerHTML=html;
   document.getElementById('exam-preview').style.display='block';
 }
 window.resetExam=()=>{document.getElementById('exam-preview').style.display='none';currentExamData=null;};
+
 
 window.handleImageUpload=(e)=>{
   const file=e.target.files[0];if(!file)return;
