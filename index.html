@@ -541,7 +541,7 @@ window.generateExam=async()=>{
   showLoading('AI 正在出題中...');
   const prompt=`你是台灣國小一年級${subjLabel}老師，幫我出${selectedQty}題考卷給${childName}。科目：${subjLabel}，單元：${unit.label}，知識點：${unit.topics.join('、')}，難易度：${diffLabel}。${subj==='math'?'基礎=計算題，標準=填空判斷，進階=文字應用題':'基礎=注音字詞，標準=詞語填空句子判斷，進階=短文閱讀造句'}。JSON格式回覆（不要其他文字）：{"title":"標題","subject":"${subjLabel}","unit":"${unit.label}","difficulty":"${diffLabel}","sections":[{"title":"一、題型","questions":[{"id":1,"question":"題目","answer":"答案","type":"錯誤類型","difficulty":"easy/medium/hard"}]}]}`;
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:prompt}]})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:prompt}]})});
     const data=await res.json();
     const text=data.content[0].text.replace(/```json|```/g,'').trim();
     currentExamData=JSON.parse(text);
@@ -580,7 +580,7 @@ window.gradeExam=async()=>{
   const qJson=JSON.stringify(currentExamData.sections.flatMap(s=>s.questions));
   const prompt=`你是國小老師，批改這張考卷。題目和正確答案：${qJson}。看圖片中學生的手寫答案，回傳JSON（不要其他文字）：{"results":[{"id":1,"question":"題目","student_answer":"學生答案","correct_answer":"正確答案","is_correct":true,"error_nature":"粗心/概念不熟/題意看不懂/null","error_type":"具體類型/null"}]}`;
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:"image/jpeg",data:uploadedImageBase64}},{type:"text",text:prompt}]}]})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:"image/jpeg",data:uploadedImageBase64}},{type:"text",text:prompt}]}]})});
     const data=await res.json();
     const text=data.content[0].text.replace(/```json|```/g,'').trim();
     gradingData=JSON.parse(text).results;
