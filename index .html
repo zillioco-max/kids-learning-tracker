@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>學習追蹤系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#faf8f5;--surface:#fff;--surface2:#f5f2ee;--border:#e8e2d9;
+  --text:#1a1714;--text2:#6b6560;--accent:#c8502a;--accent2:#e8734a;
+  --green:#3a7d5a;--blue:#2a5c8a;--yellow:#d4a017;--purple:#6b4c9a;
+  --radius:12px;--shadow:0 2px 16px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#faf8f5,#f0ebe3);}
+.auth-card{background:var(--surface);border-radius:20px;padding:44px 36px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,0.12);}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo .emoji{font-size:44px;display:block;margin-bottom:8px;}
+.auth-logo h1{font-family:'Noto Serif TC',serif;font-size:21px;}
+.auth-logo p{font-size:13px;color:var(--text2);margin-top:3px;}
+.auth-tabs{display:flex;margin-bottom:20px;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:13px;cursor:pointer;background:var(--surface2);color:var(--text2);transition:all 0.2s;}
+.auth-tab.active{background:var(--accent);color:white;font-weight:500;}
+.form-group{margin-bottom:13px;}
+.form-group label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px;}
+.form-group input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--bg);outline:none;transition:border-color 0.2s;}
+.form-group input:focus{border-color:var(--accent);}
+.btn-full{width:100%;padding:12px;border:none;border-radius:var(--radius);font-size:14px;font-family:inherit;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.btn-primary{background:var(--accent);color:white;}.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{background:var(--surface2);color:var(--text);margin-top:8px;}
+.auth-error{background:#fff3f0;border:1px solid #ffccc7;border-radius:8px;padding:8px 12px;font-size:12px;color:#c0392b;margin-bottom:12px;display:none;}
+
+#family-screen{min-height:100vh;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#faf8f5,#f0ebe3);}
+.family-card{background:var(--surface);border-radius:20px;padding:36px;width:100%;max-width:440px;box-shadow:0 8px 40px rgba(0,0,0,0.12);}
+.family-card h2{font-family:'Noto Serif TC',serif;font-size:19px;margin-bottom:6px;}
+.family-card>p{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6;}
+.or-divider{text-align:center;font-size:13px;color:var(--text2);margin:18px 0;font-weight:500;}
+.invite-code-box{background:var(--surface2);border:2px dashed var(--border);border-radius:var(--radius);padding:18px;text-align:center;margin-top:14px;}
+.invite-code-box .code{font-family:monospace;font-size:26px;letter-spacing:5px;font-weight:700;color:var(--accent);}
+.invite-code-box p{font-size:12px;color:var(--text2);margin-top:5px;}
+
+#app-screen{display:none;}
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.top-bar-left{display:flex;align-items:center;gap:9px;}
+.top-bar-logo{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:700;color:var(--accent);}
+.family-badge{font-size:12px;color:var(--text2);background:var(--surface2);padding:3px 9px;border-radius:20px;}
+.user-badge{font-size:12px;color:var(--text2);}
+.btn-logout{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 11px;font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit;}
+
+.nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;gap:2px;overflow-x:auto;}
+.nav-tab{padding:11px 13px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.main-content{padding:18px;max-width:840px;margin:0 auto;}
+
+.child-selector{display:flex;gap:10px;margin-bottom:18px;}
+.child-card{flex:1;padding:13px 14px;border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.2s;background:var(--surface);text-align:center;}
+.child-card.active{border-color:var(--accent);background:#fff8f6;}
+.child-card .child-emoji{font-size:24px;display:block;margin-bottom:3px;}
+.child-card .child-name{font-size:14px;font-weight:500;}
+.child-card .child-stars{font-size:11px;color:var(--yellow);margin-top:2px;}
+.child-card .child-level{font-size:11px;color:var(--text2);margin-top:1px;}
+
+.card{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:14px;}
+.section-title{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.form-select{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;}
+.form-label{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px;display:block;}
+.difficulty-picker{display:flex;gap:7px;margin-bottom:14px;}
+.diff-btn{flex:1;padding:8px 4px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;font-size:12px;font-family:inherit;text-align:center;transition:all 0.2s;}
+.diff-btn.active-easy{border-color:var(--green);background:#f0faf5;color:var(--green);font-weight:500;}
+.diff-btn.active-medium{border-color:var(--yellow);background:#fdf8ed;color:var(--yellow);font-weight:500;}
+.diff-btn.active-hard{border-color:var(--accent);background:#fff8f6;color:var(--accent);font-weight:500;}
+.diff-btn.active-mix{border-color:var(--purple);background:#f5f0ff;color:var(--purple);font-weight:500;}
+.qty-picker{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.qty-btn{padding:6px 13px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface);cursor:pointer;font-size:12px;font-family:inherit;transition:all 0.2s;}
+.qty-btn.active{border-color:var(--accent);background:var(--accent);color:white;}
+.generate-btn{width:100%;padding:12px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.generate-btn:hover{background:var(--accent2);transform:translateY(-1px);}
+
+#exam-preview{display:none;}
+.exam-paper{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:12px;}
+.exam-header{text-align:center;border-bottom:2px solid var(--text);padding-bottom:12px;margin-bottom:18px;}
+.exam-header h2{font-family:'Noto Serif TC',serif;font-size:19px;margin-bottom:5px;}
+.exam-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);flex-wrap:wrap;gap:3px;}
+.exam-section{margin-bottom:18px;}
+.exam-section-title{font-size:13px;font-weight:600;margin-bottom:9px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.exam-question{margin-bottom:13px;font-size:14px;line-height:2;}
+.exam-question .q-num{font-weight:600;color:var(--accent);margin-right:3px;}
+.answer-line{display:inline-block;width:65px;border-bottom:1.5px solid var(--text);margin:0 3px;vertical-align:bottom;}
+.exam-actions{display:flex;gap:8px;}
+.btn-print{flex:1;padding:10px;background:var(--blue);color:white;border:none;border-radius:var(--radius);font-size:12px;font-family:inherit;cursor:pointer;font-weight:500;}
+.btn-upload-go{flex:1;padding:10px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:12px;font-family:inherit;cursor:pointer;font-weight:500;}
+.btn-new{flex:1;padding:10px;background:var(--surface2);color:var(--text);border:none;border-radius:var(--radius);font-size:12px;font-family:inherit;cursor:pointer;font-weight:500;}
+
+.upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg);}
+.upload-area:hover{border-color:var(--accent);background:#fff8f6;}
+.upload-area .upload-icon{font-size:32px;margin-bottom:9px;}
+.upload-area p{font-size:13px;color:var(--text2);}
+.upload-area span{font-size:12px;color:var(--text2);margin-top:3px;display:block;}
+#file-input{display:none;}
+.upload-preview{margin-top:12px;display:none;}
+.upload-preview img{max-width:100%;border-radius:var(--radius);border:1px solid var(--border);}
+
+#grading-section{display:none;margin-top:14px;}
+.score-summary{text-align:center;padding:18px;background:var(--surface);border-radius:var(--radius);margin-bottom:12px;border:1px solid var(--border);}
+.score-big{font-family:'Noto Serif TC',serif;font-size:50px;font-weight:700;color:var(--accent);line-height:1;}
+.score-label{font-size:12px;color:var(--text2);margin-top:3px;}
+.stars-earned{font-size:13px;color:var(--yellow);font-weight:500;margin-top:4px;}
+.grading-result{background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.question-result{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);}
+.question-result:last-child{border-bottom:none;}
+.result-status{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px;}
+.status-correct{background:#d4edda;color:#155724;}.status-wrong{background:#f8d7da;color:#721c24;}
+.result-content{flex:1;}
+.result-q{font-size:13px;margin-bottom:3px;}
+.result-answer{font-size:12px;color:var(--text2);}
+.result-answer .wrong{color:#c0392b;text-decoration:line-through;}
+.result-answer .correct{color:var(--green);font-weight:500;}
+.result-type{font-size:11px;padding:2px 7px;border-radius:10px;background:#fff3cd;color:#856404;margin-top:3px;display:inline-block;}
+.override-btn{font-size:11px;padding:2px 7px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:inherit;color:var(--text2);margin-left:5px;}
+.save-btn{width:100%;padding:12px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px;}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:13px;text-align:center;border:1px solid var(--border);}
+.stat-num{font-family:'Noto Serif TC',serif;font-size:26px;font-weight:700;color:var(--accent);}
+.stat-label{font-size:11px;color:var(--text2);margin-top:2px;}
+.weakness-item{display:flex;align-items:center;gap:9px;padding:9px 13px;background:var(--surface);border-radius:var(--radius);margin-bottom:6px;border:1px solid var(--border);}
+.weakness-bar-wrap{flex:1;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.weakness-bar{height:100%;border-radius:4px;background:var(--accent);transition:width 0.5s;}
+.weakness-label{font-size:12px;min-width:100px;}
+.weakness-count{font-size:11px;color:var(--text2);min-width:40px;text-align:right;}
+.suggestion-card{background:#fff8f0;border:1px solid #ffd9b3;border-radius:var(--radius);padding:13px 16px;margin-bottom:8px;}
+.suggestion-card .s-title{font-size:13px;font-weight:500;margin-bottom:4px;}
+.suggestion-card .s-body{font-size:12px;color:var(--text2);line-height:1.7;}
+.record-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.record-date{font-size:11px;color:var(--text2);min-width:65px;}
+.record-info{flex:1;}
+.record-title{font-size:13px;font-weight:500;}
+.record-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.record-score{font-family:'Noto Serif TC',serif;font-size:19px;font-weight:700;color:var(--accent);}
+.record-who{font-size:10px;color:var(--text2);background:var(--surface2);padding:1px 5px;border-radius:7px;}
+
+.celebration-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;}
+.celebration-overlay.show{display:flex;}
+.celebration-card{background:white;border-radius:22px;padding:36px 32px;text-align:center;max-width:320px;animation:popIn 0.4s ease;}
+@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+.celebration-emoji{font-size:60px;display:block;margin-bottom:10px;animation:bounce 0.6s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.celebration-title{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;margin-bottom:6px;}
+.celebration-score{font-size:46px;font-weight:700;color:var(--accent);font-family:'Noto Serif TC',serif;}
+.celebration-stars{font-size:18px;color:var(--yellow);margin:7px 0;}
+.celebration-msg{font-size:13px;color:var(--text2);margin:9px 0 18px;line-height:1.6;}
+.celebration-new-badge{background:#e8f5e9;border:1px solid #81c784;border-radius:9px;padding:7px 14px;font-size:12px;color:#2e7d32;margin-bottom:14px;}
+.btn-celebration{background:var(--accent);color:white;border:none;border-radius:var(--radius);padding:11px 28px;font-size:13px;font-family:inherit;cursor:pointer;font-weight:500;}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.88);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.loading-overlay.show{display:flex;}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--text2);}
+.empty-state{text-align:center;padding:28px;color:var(--text2);}
+.empty-state .empty-icon{font-size:36px;margin-bottom:9px;}
+.empty-state p{font-size:13px;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.mt8{margin-top:8px;}
+@media print{body *{visibility:hidden;}#print-area,#print-area *{visibility:visible;}#print-area{position:fixed;top:0;left:0;width:100%;}}
+@media(max-width:600px){.exam-grid{grid-template-columns:1fr;}.stats-grid{grid-template-columns:1fr 1fr;}.main-content{padding:14px;}.auth-card{padding:28px 20px;}}
+</style>
+</head>
+<body>
+
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo"><span class="emoji">📚</span><h1>學習追蹤系統</h1><p>雙胞胎學習管理平台</p></div>
+    <div class="auth-tabs"><div class="auth-tab active" onclick="showAuthTab('login')">登入</div><div class="auth-tab" onclick="showAuthTab('register')">註冊</div></div>
+    <div class="auth-error" id="auth-error"></div>
+    <div id="login-form">
+      <div class="form-group"><label>電子郵件</label><input type="email" id="email-input" placeholder="輸入信箱"></div>
+      <div class="form-group"><label>密碼</label><input type="password" id="password-input" placeholder="輸入密碼"></div>
+      <button class="btn-full btn-primary" onclick="login()">登入</button>
+    </div>
+    <div id="register-form" style="display:none">
+      <div class="form-group"><label>電子郵件</label><input type="email" id="reg-email" placeholder="輸入信箱"></div>
+      <div class="form-group"><label>密碼（至少6字元）</label><input type="password" id="reg-password" placeholder="設定密碼"></div>
+      <div class="form-group"><label>你的稱呼</label><input type="text" id="reg-name" placeholder="例：媽媽、爸爸"></div>
+      <button class="btn-full btn-primary" onclick="register()">建立帳號</button>
+    </div>
+  </div>
+</div>
+
+<div id="family-screen">
+  <div class="family-card">
+    <h2>👨‍👩‍👧‍👦 設定家庭空間</h2>
+    <p>建立家庭空間後，家人可用邀請碼加入，共同追蹤孩子學習進度。</p>
+    <div class="form-group"><label>家庭名稱</label><input type="text" id="family-name-input" placeholder="例：我們家"></div>
+    <div class="form-group"><label>孩子 A 名字</label><input type="text" id="child-a-input" placeholder="例：小明"></div>
+    <div class="form-group"><label>孩子 B 名字</label><input type="text" id="child-b-input" placeholder="例：小美"></div>
+    <button class="btn-full btn-primary" onclick="createFamily()">建立家庭空間</button>
+    <div class="or-divider">── 或者 ──</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:11px">已有家庭空間？輸入邀請碼加入</p>
+    <div class="form-group"><label>邀請碼</label><input type="text" id="join-code-input" placeholder="輸入6位邀請碼" style="text-transform:uppercase;letter-spacing:3px;font-size:17px;text-align:center"></div>
+    <button class="btn-full btn-secondary" onclick="joinFamily()">加入家庭</button>
+    <div class="invite-code-box" id="new-family-code" style="display:none">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:7px">🎉 建立成功！把邀請碼分享給家人</p>
+      <div class="code" id="code-display"></div>
+      <p>家人註冊後在此頁面輸入邀請碼即可加入</p>
+      <button class="btn-full btn-primary mt8" onclick="enterApp()">進入系統</button>
+    </div>
+  </div>
+</div>
+
+<div id="app-screen">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="top-bar-logo">📚 學習追蹤</span>
+      <span class="family-badge" id="family-name-badge">家庭</span>
+      <span class="user-badge" id="user-name-badge"></span>
+    </div>
+    <button class="btn-logout" onclick="logout()">登出</button>
+  </div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchTab('generate')">✏️ 出考卷</div>
+    <div class="nav-tab" onclick="switchTab('upload')">📷 批改</div>
+    <div class="nav-tab" onclick="switchTab('records')">📊 紀錄</div>
+    <div class="nav-tab" onclick="switchTab('achievement')">🏆 成就</div>
+    <div class="nav-tab" onclick="switchTab('settings')">⚙️ 設定</div>
+  </div>
+
+  <div class="main-content">
+    <div class="child-selector">
+      <div class="child-card active" id="child-card-A" onclick="selectChild('A')">
+        <span class="child-emoji">🧒</span>
+        <div class="child-name" id="child-name-A">孩子 A</div>
+        <div class="child-stars" id="child-stars-A">⭐ 0 顆星</div>
+        <div class="child-level" id="child-level-A">🌱 學習新手</div>
+      </div>
+      <div class="child-card" id="child-card-B" onclick="selectChild('B')">
+        <span class="child-emoji">🧒</span>
+        <div class="child-name" id="child-name-B">孩子 B</div>
+        <div class="child-stars" id="child-stars-B">⭐ 0 顆星</div>
+        <div class="child-level" id="child-level-B">🌱 學習新手</div>
+      </div>
+    </div>
+
+    <div class="tab-content active" id="tab-generate">
+      <div class="card">
+        <div class="section-title">⚙️ 設定考卷</div>
+        <div class="exam-grid">
+          <div><label class="form-label">科目</label><select class="form-select" id="subject-select" onchange="updateUnitOptions()"><option value="math">數學（翰林）</option><option value="chinese">國語（康軒）</option></select></div>
+          <div><label class="form-label">單元 / 課次</label><select class="form-select" id="unit-select"></select></div>
+        </div>
+        <label class="form-label">難易度</label>
+        <div class="difficulty-picker">
+          <button class="diff-btn active-easy" id="diff-easy" onclick="setDifficulty('easy')">🟢 基礎</button>
+          <button class="diff-btn" id="diff-medium" onclick="setDifficulty('medium')">🟡 標準</button>
+          <button class="diff-btn" id="diff-hard" onclick="setDifficulty('hard')">🔴 進階</button>
+          <button class="diff-btn" id="diff-mix" onclick="setDifficulty('mix')">🎯 混合</button>
+        </div>
+        <label class="form-label">題數</label>
+        <div class="qty-picker">
+          <button class="qty-btn" onclick="setQty(5)">5題</button>
+          <button class="qty-btn active" onclick="setQty(10)">10題</button>
+          <button class="qty-btn" onclick="setQty(15)">15題</button>
+          <button class="qty-btn" onclick="setQty(20)">20題</button>
+          <button class="qty-btn" onclick="setQty(30)">30題</button>
+        </div>
+        <button class="generate-btn" onclick="generateExam()">✨ 產生考卷</button>
+      </div>
+      <div id="exam-preview">
+        <div id="print-area"><div class="exam-paper" id="exam-paper-content"></div></div>
+        <div class="exam-actions">
+          <button class="btn-print" onclick="window.print()">🖨️ 列印</button>
+          <button class="btn-upload-go" onclick="switchTab('upload')">📷 批改這張</button>
+          <button class="btn-new" onclick="resetExam()">🔄 重出</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-upload">
+      <div class="card">
+        <div class="section-title">📷 上傳批改</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:13px">拍下孩子寫完的考卷，AI 批改後你確認結果再儲存</p>
+        <div class="upload-area" onclick="document.getElementById('file-input').click()">
+          <div class="upload-icon">📸</div>
+          <p>點擊上傳考卷照片</p>
+          <span>支援 JPG、PNG 格式</span>
+        </div>
+        <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
+        <div class="upload-preview" id="upload-preview">
+          <img id="preview-img" src="" alt="">
+          <button class="generate-btn mt8" onclick="gradeExam()">🤖 AI 批改</button>
+        </div>
+      </div>
+      <div id="grading-section">
+        <div class="score-summary">
+          <div class="score-big" id="score-display">—</div>
+          <div class="score-label">分（確認後儲存）</div>
+          <div class="stars-earned" id="stars-earned-preview"></div>
+        </div>
+        <div class="card">
+          <div class="section-title">✅ 批改結果</div>
+          <div class="grading-result" id="grading-result"></div>
+        </div>
+        <button class="save-btn" onclick="saveRecord()">💾 確認並儲存紀錄</button>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-records">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="total-exams">0</div><div class="stat-label">張考卷</div></div>
+        <div class="stat-card"><div class="stat-num" id="avg-score">—</div><div class="stat-label">平均分數</div></div>
+        <div class="stat-card"><div class="stat-num" id="weak-count">0</div><div class="stat-label">弱點項目</div></div>
+      </div>
+      <div class="card"><div class="section-title">📉 弱點分析</div><div id="weakness-list"><div class="empty-state"><div class="empty-icon">📊</div><p>完成幾張考卷後就會出現弱點分析</p></div></div></div>
+      <div class="card"><div class="section-title">💡 教學建議</div><div id="suggestions-list"><div class="empty-state"><div class="empty-icon">🧑‍🏫</div><p>累積錯題後會出現個人化教學建議</p></div></div></div>
+      <div class="card"><div class="section-title">📋 考卷紀錄</div><div id="record-list"><div class="empty-state"><div class="empty-icon">📝</div><p>還沒有考卷紀錄</p></div></div></div>
+    </div>
+
+    <div class="tab-content" id="tab-achievement">
+      <div class="card"><div class="section-title">⭐ 星星與等級</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:11px" id="achievement-cards"></div></div>
+      <div class="card"><div class="section-title">🏅 徽章收集</div><div id="badge-collection"><div class="empty-state"><div class="empty-icon">🏅</div><p>完成考卷後徽章會慢慢解鎖</p></div></div></div>
+    </div>
+
+    <div class="tab-content" id="tab-settings">
+      <div class="card">
+        <div class="section-title">🔑 Claude API Key</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:13px;line-height:1.6">API Key 儲存在你自己的瀏覽器，不會上傳到任何地方。每台裝置需各自設定一次。</p>
+        <div class="form-group"><label class="form-label">Claude API Key</label><input type="password" id="api-key-input" placeholder="sk-ant-api03-..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--bg);outline:none;"></div>
+        <button class="generate-btn" onclick="saveApiKeySetting()">💾 儲存 API Key</button>
+        <div id="api-key-status" style="margin-top:9px;font-size:12px;color:var(--green);display:none">✅ API Key 已儲存</div>
+      </div>
+      <div class="card">
+        <div class="section-title">👨‍👩‍👧‍👦 家庭邀請碼</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:11px">把邀請碼分享給家人，讓他們加入你的家庭空間</p>
+        <div class="invite-code-box"><div class="code" id="settings-invite-code">——</div><p>家人在設定頁面輸入此邀請碼即可加入</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="celebration-overlay" id="celebration">
+  <div class="celebration-card">
+    <span class="celebration-emoji" id="cel-emoji">🎉</span>
+    <div class="celebration-title" id="cel-title">太棒了！</div>
+    <div class="celebration-score" id="cel-score">100分</div>
+    <div class="celebration-stars" id="cel-stars">⭐⭐⭐</div>
+    <div class="celebration-msg" id="cel-msg"></div>
+    <div class="celebration-new-badge" id="cel-badge" style="display:none"></div>
+    <button class="btn-celebration" onclick="closeCelebration()">繼續加油 💪</button>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">處理中...</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCNTND8ItGhDlZfB6LobjKJ_FeQq_brIJs",
+  authDomain: "kids-learning-tracker.firebaseapp.com",
+  projectId: "kids-learning-tracker",
+  storageBucket: "kids-learning-tracker.firebasestorage.app",
+  messagingSenderId: "1088123286886",
+  appId: "1:1088123286886:web:e6146be6a56c98571504a7"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const MATH_UNITS = [
+  {value:"u1",label:"第1單元：20以內的加法",topics:["基本加法","加法算式規律","加法應用"]},
+  {value:"u2",label:"第2單元：長度",topics:["長度比較","個別單位測量","長度的加減"]},
+  {value:"u3",label:"第3單元：20以內的減法",topics:["基本減法","夠不夠","比較多和比較少"]},
+  {value:"u4",label:"第4單元：100以內的數",topics:["數到100","位值","數的大小比較","百數表"]},
+  {value:"u5",label:"第5單元：形狀與形體",topics:["圖形辨識","拼圖形","堆形體"]},
+  {value:"u6",label:"第6單元：數數看有多少元",topics:["認識硬幣","付錢","找零","夠不夠付"]},
+  {value:"u7",label:"第7單元：幾月幾日星期幾",topics:["認識日曆","認識月曆","月曆應用"]},
+  {value:"u8",label:"第8單元：兩位數的加減法",topics:["不進位加法","進位加法","不退位減法","退位減法"]},
+  {value:"u9",label:"第9單元：分類整理",topics:["分類","記錄","報讀圖表"]},
+];
+const CHINESE_UNITS = [
+  {value:"c1",label:"第一課：生活放大鏡",topics:["生字詞","注音","句型練習"]},
+  {value:"c2",label:"第二課：花園裡有什麼？",topics:["生字詞","注音","問句練習"]},
+  {value:"c3",label:"第三課：媽媽的音樂會",topics:["生字詞","注音","閱讀理解"]},
+  {value:"c4",label:"第四課：甜蜜的家",topics:["生字詞","注音","造句"]},
+  {value:"c5",label:"第五課：小種子快長大",topics:["生字詞","注音","閱讀理解"]},
+  {value:"c6",label:"第六課：鞋",topics:["生字詞","注音","詞語運用"]},
+  {value:"c7",label:"第七課：作夢的紅雲",topics:["生字詞","注音","詩歌理解"]},
+  {value:"c8",label:"第八課：妹妹的虹",topics:["生字詞","注音","閱讀理解"]},
+  {value:"c9",label:"第九課：七彩的虹",topics:["生字詞","注音","造句"]},
+  {value:"c10",label:"第十課：和你在一起",topics:["生字詞","注音","閱讀理解"]},
+  {value:"c11",label:"第十一課：生日快樂",topics:["生字詞","注音","句型練習"]},
+  {value:"c12",label:"第十二課：小黑",topics:["生字詞","注音","閱讀理解"]},
+];
+const BADGES = [
+  {id:"first_exam",name:"初次挑戰",emoji:"🌱",desc:"完成第一張考卷",condition:s=>s.totalExams>=1},
+  {id:"perfect",name:"滿分達人",emoji:"💯",desc:"考了一次100分",condition:s=>s.hasPerfect},
+  {id:"math_hero",name:"數學小勇士",emoji:"🔢",desc:"完成5張數學考卷",condition:s=>s.mathExams>=5},
+  {id:"chinese_hero",name:"國語達人",emoji:"📖",desc:"完成5張國語考卷",condition:s=>s.chineseExams>=5},
+  {id:"stars10",name:"星光閃耀",emoji:"⭐",desc:"累積10顆星",condition:s=>s.totalStars>=10},
+  {id:"stars30",name:"星海遨遊",emoji:"🌟",desc:"累積30顆星",condition:s=>s.totalStars>=30},
+  {id:"improver",name:"進步之星",emoji:"📈",desc:"連續進步兩次",condition:s=>s.consecutiveImprove>=2},
+  {id:"consistent",name:"持之以恆",emoji:"🏃",desc:"完成10張考卷",condition:s=>s.totalExams>=10},
+];
+const LEVELS = [
+  {min:0,name:"學習新手",emoji:"🌱"},
+  {min:10,name:"努力學生",emoji:"📚"},
+  {min:25,name:"知識探索者",emoji:"🔍"},
+  {min:50,name:"學習達人",emoji:"⭐"},
+  {min:80,name:"知識小星",emoji:"🌟"},
+  {min:120,name:"學霸傳說",emoji:"🏆"},
+];
+
+function getApiKey(){return localStorage.getItem('claude_api_key')||'';}
+function saveApiKey(key){localStorage.setItem('claude_api_key',key);}
+
+let currentUser=null,currentChild='A',selectedDifficulty='easy',selectedQty=10;
+let currentExamData=null,gradingData=[],uploadedImageBase64=null,familyData=null;
+
+onAuthStateChanged(auth,async(user)=>{
+  if(user){
+    currentUser=user;
+    showLoading('載入中...');
+    const ud=await getDoc(doc(db,"users",user.uid));
+    if(!ud.exists()||!ud.data().familyId){hideLoading();showFamilyScreen();return;}
+    await loadFamily(ud.data().familyId);
+    document.getElementById('user-name-badge').textContent=ud.data().name||'';
+    hideLoading();showApp();
+  }else{showAuthScreen();}
+});
+
+async function loadFamily(fid){
+  const fd=await getDoc(doc(db,"families",fid));
+  if(fd.exists()){
+    familyData={id:fid,...fd.data()};
+    document.getElementById('family-name-badge').textContent=familyData.name||'我們家';
+    document.getElementById('child-name-A').textContent=familyData.childA||'孩子 A';
+    document.getElementById('child-name-B').textContent=familyData.childB||'孩子 B';
+    document.getElementById('settings-invite-code').textContent=familyData.inviteCode||'——';
+  }
+}
+function showAuthScreen(){document.getElementById('auth-screen').style.display='flex';document.getElementById('family-screen').style.display='none';document.getElementById('app-screen').style.display='none';}
+function showFamilyScreen(){document.getElementById('auth-screen').style.display='none';document.getElementById('family-screen').style.display='flex';document.getElementById('app-screen').style.display='none';}
+function showApp(){document.getElementById('auth-screen').style.display='none';document.getElementById('family-screen').style.display='none';document.getElementById('app-screen').style.display='block';updateUnitOptions();loadRecords();updateChildCards();}
+
+window.login=async()=>{
+  try{showLoading('登入中...');await signInWithEmailAndPassword(auth,document.getElementById('email-input').value,document.getElementById('password-input').value);}
+  catch(e){hideLoading();showAuthError('帳號或密碼錯誤');}
+};
+window.register=async()=>{
+  const email=document.getElementById('reg-email').value,pw=document.getElementById('reg-password').value,name=document.getElementById('reg-name').value||'家長';
+  try{showLoading('建立帳號中...');const c=await createUserWithEmailAndPassword(auth,email,pw);await setDoc(doc(db,"users",c.user.uid),{name,email,familyId:null});hideLoading();showFamilyScreen();}
+  catch(e){hideLoading();showAuthError(e.code==='auth/email-already-in-use'?'此信箱已被使用':'註冊失敗');}
+};
+window.logout=()=>signOut(auth);
+window.showAuthTab=(tab)=>{
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
+  document.getElementById('register-form').style.display=tab==='register'?'block':'none';
+};
+
+window.createFamily=async()=>{
+  const name=document.getElementById('family-name-input').value||'我們家';
+  const childA=document.getElementById('child-a-input').value||'孩子 A';
+  const childB=document.getElementById('child-b-input').value||'孩子 B';
+  const inviteCode=Math.random().toString(36).substring(2,8).toUpperCase();
+  showLoading('建立家庭中...');
+  try{
+    const fr=doc(collection(db,"families"));
+    await setDoc(fr,{name,childA,childB,inviteCode,members:[currentUser.uid],createdAt:new Date().toISOString()});
+    await updateDoc(doc(db,"users",currentUser.uid),{familyId:fr.id});
+    await loadFamily(fr.id);
+    hideLoading();
+    document.getElementById('code-display').textContent=inviteCode;
+    document.getElementById('new-family-code').style.display='block';
+  }catch(e){hideLoading();alert('建立失敗，請再試一次');}
+};
+window.joinFamily=async()=>{
+  const code=document.getElementById('join-code-input').value.trim().toUpperCase();
+  if(!code){alert('請輸入邀請碼');return;}
+  showLoading('加入家庭中...');
+  try{
+    const q=query(collection(db,"families"),where("inviteCode","==",code));
+    const snap=await getDocs(q);
+    if(snap.empty){hideLoading();alert('找不到此邀請碼');return;}
+    const fd=snap.docs[0];
+    const members=fd.data().members||[];
+    if(!members.includes(currentUser.uid))await updateDoc(doc(db,"families",fd.id),{members:[...members,currentUser.uid]});
+    await updateDoc(doc(db,"users",currentUser.uid),{familyId:fd.id});
+    await loadFamily(fd.id);
+    hideLoading();showApp();
+  }catch(e){hideLoading();alert('加入失敗');console.error(e);}
+};
+window.enterApp=()=>showApp();
+
+window.switchTab=(tab)=>{
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  ['generate','upload','records','achievement','settings'].forEach((t,i)=>{if(t===tab)document.querySelectorAll('.nav-tab')[i]?.classList.add('active');});
+  if(tab==='records')loadRecords();
+  if(tab==='achievement'){document.getElementById('achievement-cards').innerHTML='';loadAchievements();}
+  if(tab==='settings')loadSettings();
+};
+window.selectChild=(child)=>{
+  currentChild=child;
+  document.getElementById('child-card-A').classList.toggle('active',child==='A');
+  document.getElementById('child-card-B').classList.toggle('active',child==='B');
+  loadRecords();
+};
+window.setDifficulty=(d)=>{
+  selectedDifficulty=d;
+  ['easy','medium','hard','mix'].forEach(x=>{const b=document.getElementById('diff-'+x);b.className='diff-btn';if(x===d)b.classList.add('active-'+x);});
+};
+window.setQty=(n)=>{selectedQty=n;document.querySelectorAll('.qty-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===n+'題'));};
+window.updateUnitOptions=()=>{
+  const subj=document.getElementById('subject-select').value;
+  const units=subj==='math'?MATH_UNITS:CHINESE_UNITS;
+  document.getElementById('unit-select').innerHTML=units.map(u=>`<option value="${u.value}">${u.label}</option>`).join('');
+};
+
+window.generateExam=async()=>{
+  const apiKey=getApiKey();
+  if(!apiKey){alert('請先到「⚙️ 設定」頁面輸入 Claude API Key');switchTab('settings');return;}
+  const subj=document.getElementById('subject-select').value;
+  const unitVal=document.getElementById('unit-select').value;
+  const units=subj==='math'?MATH_UNITS:CHINESE_UNITS;
+  const unit=units.find(u=>u.value===unitVal);
+  const diffLabel={easy:'基礎',medium:'標準',hard:'進階',mix:'混合（基礎60%+標準30%+進階10%）'}[selectedDifficulty];
+  const subjLabel=subj==='math'?'數學（翰林）':'國語（康軒）';
+  const childName=familyData?.[currentChild==='A'?'childA':'childB']||('孩子'+currentChild);
+  showLoading('AI 正在出題中...');
+  const prompt=`你是台灣國小一年級${subjLabel}老師，幫我出${selectedQty}題考卷給${childName}。科目：${subjLabel}，單元：${unit.label}，知識點：${unit.topics.join('、')}，難易度：${diffLabel}。${subj==='math'?'基礎=計算題，標準=填空判斷，進階=文字應用題':'基礎=注音字詞，標準=詞語填空句子判斷，進階=短文閱讀造句'}。JSON格式回覆（不要其他文字）：{"title":"標題","subject":"${subjLabel}","unit":"${unit.label}","difficulty":"${diffLabel}","sections":[{"title":"一、題型","questions":[{"id":1,"question":"題目","answer":"答案","type":"錯誤類型","difficulty":"easy/medium/hard"}]}]}`;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:prompt}]})});
+    const data=await res.json();
+    const text=data.content[0].text.replace(/```json|```/g,'').trim();
+    currentExamData=JSON.parse(text);
+    renderExam(currentExamData);
+    hideLoading();
+  }catch(e){hideLoading();alert('出題失敗，請確認 API Key 是否正確');console.error(e);}
+};
+
+function renderExam(exam){
+  const today=new Date().toLocaleDateString('zh-TW');
+  const childName=familyData?.[currentChild==='A'?'childA':'childB']||('孩子'+currentChild);
+  let html=`<div class="exam-header"><h2>${exam.title}</h2><div class="exam-meta"><span>姓名：${childName}</span><span>日期：${today}</span><span>班級：一年___班</span><span>分數：___________</span></div></div>`;
+  exam.sections.forEach(s=>{
+    html+=`<div class="exam-section"><div class="exam-section-title">${s.title}</div>`;
+    s.questions.forEach(q=>{html+=`<div class="exam-question"><span class="q-num">${q.id}.</span>${q.question.replace(/___/g,'<span class="answer-line"></span>')}</div>`;});
+    html+=`</div>`;
+  });
+  document.getElementById('exam-paper-content').innerHTML=html;
+  document.getElementById('exam-preview').style.display='block';
+}
+window.resetExam=()=>{document.getElementById('exam-preview').style.display='none';currentExamData=null;};
+
+window.handleImageUpload=(e)=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{uploadedImageBase64=ev.target.result.split(',')[1];document.getElementById('preview-img').src=ev.target.result;document.getElementById('upload-preview').style.display='block';};
+  reader.readAsDataURL(file);
+};
+
+window.gradeExam=async()=>{
+  if(!uploadedImageBase64)return;
+  if(!currentExamData){alert('請先在「出考卷」頁面產生考卷，再上傳批改');return;}
+  const apiKey=getApiKey();
+  if(!apiKey){alert('請先到「⚙️ 設定」頁面輸入 Claude API Key');switchTab('settings');return;}
+  showLoading('AI 正在批改中...');
+  const qJson=JSON.stringify(currentExamData.sections.flatMap(s=>s.questions));
+  const prompt=`你是國小老師，批改這張考卷。題目和正確答案：${qJson}。看圖片中學生的手寫答案，回傳JSON（不要其他文字）：{"results":[{"id":1,"question":"題目","student_answer":"學生答案","correct_answer":"正確答案","is_correct":true,"error_nature":"粗心/概念不熟/題意看不懂/null","error_type":"具體類型/null"}]}`;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:"image/jpeg",data:uploadedImageBase64}},{type:"text",text:prompt}]}]})});
+    const data=await res.json();
+    const text=data.content[0].text.replace(/```json|```/g,'').trim();
+    gradingData=JSON.parse(text).results;
+    renderGrading(gradingData);
+    hideLoading();
+  }catch(e){hideLoading();alert('批改失敗，請再試一次');console.error(e);}
+};
+
+function calcStars(score){return score>=90?3:score>=70?2:score>=50?1:0;}
+
+function renderGrading(results){
+  const correct=results.filter(r=>r.is_correct).length;
+  const score=Math.round((correct/results.length)*100);
+  const stars=calcStars(score);
+  document.getElementById('score-display').textContent=score;
+  document.getElementById('stars-earned-preview').textContent=stars>0?`這次可以獲得 ${'⭐'.repeat(stars)} ${stars} 顆星`:'繼續努力，下次更好！';
+  let html='';
+  results.forEach((r,i)=>{
+    html+=`<div class="question-result"><div class="result-status ${r.is_correct?'status-correct':'status-wrong'}">${r.is_correct?'✓':'✗'}</div><div class="result-content"><div class="result-q">${r.id}. ${r.question}</div><div class="result-answer">學生答：<span class="${r.is_correct?'':'wrong'}">${r.student_answer||'未作答'}</span>${!r.is_correct?`　正確：<span class="correct">${r.correct_answer}</span>`:''}<button class="override-btn" onclick="toggleCorrect(${i})">${r.is_correct?'標為錯':'標為對'}</button></div>${!r.is_correct&&r.error_type?`<span class="result-type">⚠️ ${r.error_nature}：${r.error_type}</span>`:''}</div></div>`;
+  });
+  document.getElementById('grading-result').innerHTML=html;
+  document.getElementById('grading-section').style.display='block';
+}
+
+window.toggleCorrect=(i)=>{
+  gradingData[i].is_correct=!gradingData[i].is_correct;
+  const correct=gradingData.filter(r=>r.is_correct).length;
+  const score=Math.round((correct/gradingData.length)*100);
+  const stars=calcStars(score);
+  document.getElementById('score-display').textContent=score;
+  document.getElementById('stars-earned-preview').textContent=stars>0?`這次可以獲得 ${'⭐'.repeat(stars)} ${stars} 顆星`:'繼續努力！';
+  renderGrading(gradingData);
+};
+
+window.saveRecord=async()=>{
+  if(!gradingData.length||!currentUser||!familyData)return;
+  showLoading('儲存中...');
+  const correct=gradingData.filter(r=>r.is_correct).length;
+  const score=Math.round((correct/gradingData.length)*100);
+  const stars=calcStars(score);
+  const subj=document.getElementById('subject-select').value;
+  const unitVal=document.getElementById('unit-select').value;
+  const units=subj==='math'?MATH_UNITS:CHINESE_UNITS;
+  const unit=units.find(u=>u.value===unitVal);
+  const ud=await getDoc(doc(db,"users",currentUser.uid));
+  const uploaderName=ud.data()?.name||'家長';
+  const record={familyId:familyData.id,child:currentChild,uploadedBy:uploaderName,date:new Date().toISOString(),subject:subj==='math'?'數學':'國語',unit:unit.label,score,stars,totalQuestions:gradingData.length,correctCount:correct,errors:gradingData.filter(r=>!r.is_correct).map(r=>({question:r.question,studentAnswer:r.student_answer,correctAnswer:r.correct_answer,errorNature:r.error_nature,errorType:r.error_type}))};
+  try{
+    await addDoc(collection(db,"exam_records"),record);
+    const sRef=doc(db,"child_stats",`${familyData.id}_${currentChild}`);
+    const sDoc=await getDoc(sRef);
+    const prev=sDoc.exists()?sDoc.data():{totalStars:0,totalExams:0,mathExams:0,chineseExams:0,hasPerfect:false,consecutiveImprove:0,lastScore:0,badges:[]};
+    const ns={...prev,totalStars:(prev.totalStars||0)+stars,totalExams:(prev.totalExams||0)+1,mathExams:subj==='math'?(prev.mathExams||0)+1:(prev.mathExams||0),chineseExams:subj==='chinese'?(prev.chineseExams||0)+1:(prev.chineseExams||0),hasPerfect:prev.hasPerfect||score===100,consecutiveImprove:score>(prev.lastScore||0)?(prev.consecutiveImprove||0)+1:0,lastScore:score};
+    const newBadges=[];
+    BADGES.forEach(b=>{if(!(prev.badges||[]).includes(b.id)&&b.condition(ns))newBadges.push(b.id);});
+    ns.badges=[...(prev.badges||[]),...newBadges];
+    await setDoc(sRef,ns);
+    hideLoading();
+    showCelebration(score,stars,newBadges);
+    document.getElementById('grading-section').style.display='none';
+    document.getElementById('upload-preview').style.display='none';
+    document.getElementById('file-input').value='';
+    gradingData=[];
+    updateChildCards();
+  }catch(e){hideLoading();alert('儲存失敗');console.error(e);}
+};
+
+function showCelebration(score,stars,newBadges){
+  const emoji=score===100?'🎊':score>=90?'🎉':score>=70?'😊':score>=50?'💪':'🌱';
+  const title=score===100?'完美！滿分！':score>=90?'太棒了！':score>=70?'做得好！':score>=50?'繼續加油！':'不放棄精神！';
+  const msg=score===100?'哇！全對！你真的很厲害！':score>=90?'只差一點點就滿分了，繼續保持！':score>=70?'錯的題目是進步的機會，再複習看看！':'沒關係，每次練習都是進步，繼續努力！';
+  document.getElementById('cel-emoji').textContent=emoji;
+  document.getElementById('cel-title').textContent=title;
+  document.getElementById('cel-score').textContent=score+'分';
+  document.getElementById('cel-stars').textContent=stars>0?'⭐'.repeat(stars):'繼續努力！';
+  document.getElementById('cel-msg').textContent=msg;
+  const badgeEl=document.getElementById('cel-badge');
+  if(newBadges.length){const b=BADGES.find(x=>x.id===newBadges[0]);badgeEl.textContent=`🎖️ 獲得新徽章：${b.emoji} ${b.name}`;badgeEl.style.display='block';}
+  else badgeEl.style.display='none';
+  document.getElementById('celebration').classList.add('show');
+}
+window.closeCelebration=()=>{document.getElementById('celebration').classList.remove('show');switchTab('records');};
+
+async function updateChildCards(){
+  if(!familyData)return;
+  for(const child of['A','B']){
+    const snap=await getDoc(doc(db,"child_stats",`${familyData.id}_${child}`));
+    if(snap.exists()){
+      const s=snap.data();
+      const lvl=LEVELS.slice().reverse().find(l=>s.totalStars>=l.min)||LEVELS[0];
+      document.getElementById(`child-stars-${child}`).textContent=`⭐ ${s.totalStars||0} 顆星`;
+      document.getElementById(`child-level-${child}`).textContent=`${lvl.emoji} ${lvl.name}`;
+    }
+  }
+}
+
+async function loadRecords(){
+  if(!familyData)return;
+  try{
+    const q=query(collection(db,"exam_records"),where("familyId","==",familyData.id),where("child","==",currentChild));
+    const snap=await getDocs(q);
+    const records=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    document.getElementById('total-exams').textContent=records.length;
+    if(records.length){document.getElementById('avg-score').textContent=Math.round(records.reduce((s,r)=>s+r.score,0)/records.length);}
+    const errorMap={};
+    records.forEach(r=>r.errors?.forEach(e=>{const k=e.errorType||'其他';if(!errorMap[k])errorMap[k]={count:0};errorMap[k].count++;}));
+    const weaknesses=Object.entries(errorMap).sort((a,b)=>b[1].count-a[1].count);
+    document.getElementById('weak-count').textContent=weaknesses.length;
+    if(weaknesses.length){
+      const maxC=weaknesses[0][1].count;
+      document.getElementById('weakness-list').innerHTML=weaknesses.slice(0,6).map(([t,d])=>`<div class="weakness-item"><span class="weakness-label">${t}</span><div class="weakness-bar-wrap"><div class="weakness-bar" style="width:${(d.count/maxC)*100}%"></div></div><span class="weakness-count">錯${d.count}次</span></div>`).join('');
+      document.getElementById('suggestions-list').innerHTML=weaknesses.slice(0,3).map(([t,d])=>getSuggestion(t,d.count)).join('');
+    }
+    if(records.length){
+      document.getElementById('record-list').innerHTML=records.map(r=>`<div class="record-item"><div class="record-date">${new Date(r.date).toLocaleDateString('zh-TW')}</div><div class="record-info"><div class="record-title">${r.subject}｜${r.unit}</div><div class="record-sub">共${r.totalQuestions}題，對${r.correctCount}題　<span class="record-who">by ${r.uploadedBy||'家長'}</span></div></div><div style="text-align:right"><div class="record-score">${r.score}分</div><div style="font-size:11px;color:var(--yellow)">${'⭐'.repeat(r.stars||0)}</div></div></div>`).join('');
+    }
+    updateChildCards();
+  }catch(e){console.error(e);}
+}
+
+async function loadAchievements(){
+  if(!familyData)return;
+  let cardsHtml='';
+  for(const child of['A','B']){
+    const snap=await getDoc(doc(db,"child_stats",`${familyData.id}_${child}`));
+    const s=snap.exists()?snap.data():{totalStars:0,badges:[]};
+    const childName=familyData[child==='A'?'childA':'childB']||('孩子'+child);
+    const lvl=LEVELS.slice().reverse().find(l=>s.totalStars>=l.min)||LEVELS[0];
+    const nextLvl=LEVELS.find(l=>l.min>s.totalStars);
+    const progress=nextLvl?Math.round(((s.totalStars-(lvl.min||0))/(nextLvl.min-lvl.min))*100):100;
+    cardsHtml+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center">
+      <div style="font-size:13px;font-weight:600;margin-bottom:5px">${childName}</div>
+      <div style="font-size:20px">${lvl.emoji} ${lvl.name}</div>
+      <div style="font-size:26px;font-weight:700;color:var(--yellow);font-family:'Noto Serif TC',serif">${s.totalStars||0}</div>
+      <div style="font-size:11px;color:var(--text2)">顆星</div>
+      ${nextLvl?`<div style="margin-top:7px;height:5px;background:var(--surface2);border-radius:3px"><div style="height:100%;width:${progress}%;background:var(--yellow);border-radius:3px"></div></div><div style="font-size:10px;color:var(--text2);margin-top:2px">距「${nextLvl.name}」還需 ${nextLvl.min-s.totalStars} 顆星</div>`:'<div style="font-size:11px;color:var(--yellow);margin-top:5px">🏆 最高等級！</div>'}
+    </div>`;
+  }
+  document.getElementById('achievement-cards').innerHTML=cardsHtml;
+
+  const sSnap=await getDoc(doc(db,"child_stats",`${familyData.id}_${currentChild}`));
+  const earned=sSnap.exists()?(sSnap.data().badges||[]):[];
+  document.getElementById('badge-collection').innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px">`+
+    BADGES.map(b=>`<div style="text-align:center;padding:10px 6px;border-radius:var(--radius);border:1px solid var(--border);background:${earned.includes(b.id)?'#e8f5e9':'var(--surface2)'}"><div style="font-size:22px;${earned.includes(b.id)?'':'filter:grayscale(1);opacity:0.4'}">${b.emoji}</div><div style="font-size:11px;font-weight:500;margin-top:3px">${b.name}</div><div style="font-size:10px;color:var(--text2);margin-top:1px">${b.desc}</div></div>`).join('')+`</div>`;
+}
+
+function getSuggestion(errorType,count){
+  const map={'進位錯誤':{title:'💡 進位加法需要加強',body:`已出現${count}次。建議用「湊十法」，先把數字湊成10再加剩餘的。可以用積木或手指輔助。`},'退位錯誤':{title:'💡 退位減法需要加強',body:`出現${count}次。建議用糖果等實物演示「借位」概念，讓孩子實際操作再抽象化。`},'注音錯誤':{title:'💡 注音需要加強',body:`出現${count}次。建議每天練習5個常錯的注音，用口訣記憶，例如「ㄓㄔㄕ捲舌音」一起記。`},'字詞不熟':{title:'💡 字詞記憶需要加強',body:`出現${count}次。建議製作字卡，每天複習5-10個生字，加上造句練習幫助記憶。`},'題意理解錯誤':{title:'💡 閱讀理解需要加強',body:`出現${count}次。建議養成「先讀兩遍再作答」的習慣，練習用自己的話說出題目意思。`}};
+  const s=map[errorType]||{title:`💡 ${errorType} 需要加強`,body:`已出現${count}次此類錯誤，建議針對這個知識點多做練習。`};
+  return `<div class="suggestion-card"><div class="s-title">${s.title}</div><div class="s-body">${s.body}</div></div>`;
+}
+
+window.saveApiKeySetting=()=>{
+  const key=document.getElementById('api-key-input').value.trim();
+  if(!key){alert('請輸入 API Key');return;}
+  saveApiKey(key);
+  document.getElementById('api-key-status').style.display='block';
+  setTimeout(()=>document.getElementById('api-key-status').style.display='none',3000);
+};
+function loadSettings(){const key=getApiKey();if(key)document.getElementById('api-key-input').value=key;}
+
+function showLoading(text){document.getElementById('loading-text').textContent=text;document.getElementById('loading').classList.add('show');}
+function hideLoading(){document.getElementById('loading').classList.remove('show');}
+function showAuthError(msg){const el=document.getElementById('auth-error');el.textContent=msg;el.style.display='block';}
+window.showLoading=showLoading;window.hideLoading=hideLoading;
+</script>
+</body>
+</html>
